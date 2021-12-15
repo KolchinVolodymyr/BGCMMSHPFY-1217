@@ -69,6 +69,6 @@ app.use(bodyParser.json())
         });
 
 
-http.createServer(app).listen(3000, () => {
+http.createServer(app).listen(process.env.PORT || 3000, () => {
   console.log('Express server listening on port 3000');
 });
