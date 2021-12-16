@@ -2,12 +2,14 @@ const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser')
 const dotenv = require('dotenv');
+const logger = require('./configs/logger');
+
 dotenv.config();
 
 const BigCommerce = require('node-bigcommerce');
 const bigCommerce = new BigCommerce({
-  clientId: '91b9jalhudogsst03vmoeqia3tiiayp',
-  accessToken: '44k9qx9obxx2x1o99c4ieu1c1ooliz6',
+  clientId: '86bfttjvss10z12wpri60pepjxeqkd4',
+  accessToken: '3yfxxhuj8khf4dcjcu2pemc12z7i8fo',
   storeHash: '1olu80ndn1',
   responseType: 'json'
 });
@@ -21,7 +23,7 @@ app.use(bodyParser.json())
       let scopes = webhooks.map(a => a.scope);
       const hookBody = {
         "scope": "store/customer/created",
-        "destination": "https://1119-46-211-20-86.ngrok.io/webhooks",
+        "destination": "https://4075-188-230-124-168.ngrok.io/webhooks",
         "is_active": true
       }
       console.log(scopes);
@@ -63,8 +65,15 @@ app.use(bodyParser.json())
                                 console.log('data customer', data);
                             });
                     }
+                    if(el.value !== 'REGULAR') {
+                        if( el.value !== 'B2BUSER') {
+                            logger.info(`First name: ${data.first_name}, Last name: ${data.last_name} email: ${data.email}`);
+                        }
+                    }
                 }
             })
+
+
           })
         });
 
