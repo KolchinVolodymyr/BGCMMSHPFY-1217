@@ -8,35 +8,34 @@ dotenv.config();
 
 const BigCommerce = require('node-bigcommerce');
 const bigCommerce = new BigCommerce({
-  clientId: '86bfttjvss10z12wpri60pepjxeqkd4',
-  accessToken: '3yfxxhuj8khf4dcjcu2pemc12z7i8fo',
-  storeHash: '1olu80ndn1',
-  responseType: 'json'
+    clientId: 'kfnfy9fisjsuqaa8ki6op8fx0sww49l',
+    accessToken: '5zjwikcnycybjiupfu9x90ccn4cjc6b',
+    storeHash: 'u3omg5mo4v',
+    responseType: 'json',
 });
 const app = express();
 
 app.use(bodyParser.json())
 
-  bigCommerce.get('/hooks')
+    bigCommerce.get('/hooks')
     .then(data => {
-      let webhooks = data;
-      let scopes = webhooks.map(a => a.scope);
-      const hookBody = {
-        "scope": "store/customer/created",
-        "destination": "https://4075-188-230-124-168.ngrok.io/webhooks",
-        "is_active": true
-      }
-      console.log(scopes);
+        let webhooks = data;
+        let scopes = webhooks.map(a => a.scope);
+        const hookBody = {
+            "scope": "store/customer/created",
+            "destination": "https://4075-188-230-124-168.ngrok.io/webhooks",
+            "is_active": true
+        }
+        console.log(scopes);
 
-      if (scopes.indexOf("store/customer/created") > -1 || scopes.indexOf("store/customer/*") > -1) {
-        console.log("Customer webhook already exists");
-      } else {
-          bigCommerce.post('/hooks', hookBody)
-            .then(data => {
-                console.log('Customer webhook created');
-            })
-      }
-
+        if (scopes.indexOf("store/customer/created") > -1 || scopes.indexOf("store/customer/*") > -1) {
+            console.log("Customer webhook already exists");
+        } else {
+            bigCommerce.post('/hooks', hookBody)
+                .then(data => {
+                    console.log('Customer webhook created');
+                })
+        }
     });
 
     app.post('/webhooks', function (req, res) {
@@ -53,29 +52,34 @@ app.use(bodyParser.json())
                         dataCustomer = { "customer_group_id": 2, "store_credit": "100" };
                         bigCommerce.put(`/customers/${customerId}`, dataCustomer)
                             .then(data => {
-                            // Catch any errors, or handle the data returned
-                                console.log('data customer', data);
+                                console.log('Data customer', data);
+                            })
+                            .catch(err => {
+                                logger.info(`Request returned error code: ${err.code}`);
                             });
                     }
                     if(el.value === 'REGULAR') {
                         dataCustomer = { "customer_group_id": 1 };
                         bigCommerce.put(`/customers/${customerId}`, dataCustomer)
                             .then(data => {
-                            // Catch any errors, or handle the data returned
-                                console.log('data customer', data);
+                                console.log('Data customer', data);
+                            })
+                            .catch(err => {
+                                logger.info(`Request returned error code: ${err.code}`);
                             });
                     }
                     if(el.value !== 'REGULAR') {
                         if( el.value !== 'B2BUSER') {
-                            logger.info(`First name: ${data.first_name}, Last name: ${data.last_name} email: ${data.email}`);
+                            logger.info(` ${data.first_name}, ${data.last_name}, ${data.email}, ${data.registration_ip_address}`);
                         }
                     }
                 }
             })
-
-
-          })
+        })
+        .catch(err => {
+            logger.info(`Request returned error code: ${err.code}`);
         });
+    });
 
 
 http.createServer(app).listen(3000, () => {

@@ -1,6 +1,6 @@
 const winston = require("winston");
 const moment = require("moment");
-const TIMESTAMP_FORMAT = moment().format('YYYY-MM-DD HH:mm:ss').trim();
+const TIMESTAMP_FORMAT = moment().format().trim();
 const FILENAME_TIMESTAMP_FORMAT =
     `${__dirname}/../../logs/${moment().format('YYYY-MM-DD').trim()}-stack-learning.log`;
 const MESSAGE = Symbol.for('message');
